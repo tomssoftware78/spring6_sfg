@@ -1,6 +1,7 @@
 package be.tvde.di.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import be.tvde.di.services.GreetingService;
 
@@ -9,6 +10,7 @@ public class SetterInjectedController {
 
    private GreetingService greetingService;
 
+   @Qualifier("greetingServiceFrenchImpl")
    @Autowired
    public void setGreetingService(GreetingService greetingService) {
       this.greetingService = greetingService;

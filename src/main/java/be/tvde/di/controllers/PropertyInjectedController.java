@@ -8,7 +8,7 @@ import be.tvde.di.services.GreetingService;
 @Controller
 public class PropertyInjectedController {
 
-   @Qualifier("greetingServiceFrenchImpl")
+   @Qualifier("french_service")
    @Autowired
    private GreetingService greetingService;
 

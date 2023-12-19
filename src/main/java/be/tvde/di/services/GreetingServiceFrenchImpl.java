@@ -2,7 +2,7 @@ package be.tvde.di.services;
 
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("french_service")
 public class GreetingServiceFrenchImpl implements GreetingService {
 
    @Override

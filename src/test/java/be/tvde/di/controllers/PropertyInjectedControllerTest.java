@@ -13,6 +13,6 @@ class PropertyInjectedControllerTest {
 
    @Test
    void testSayHello() {
-      assertEquals("Bonjour tous le monde", propertyInjectedController.sayHello());
+      assertEquals("Hello Everyone from base service", propertyInjectedController.sayHello());
    }
 }

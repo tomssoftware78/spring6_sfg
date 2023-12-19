@@ -13,6 +13,6 @@ class ConstructorInjectedControllerTest {
 
    @Test
    void testSayHello() {
-      assertEquals("Bonjour tous le monde",constructorInjectedController.sayHello());
+      assertEquals("Hello everyone",constructorInjectedController.sayHello());
    }
 }

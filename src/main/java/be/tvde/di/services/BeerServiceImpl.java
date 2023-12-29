@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import be.tvde.di.model.Beer;
 import be.tvde.di.model.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +78,31 @@ public class BeerServiceImpl implements BeerService {
       log.debug("Get Beer by Id - in service. Id: " + id.toString());
 
       return beerMap.get(id);
+   }
+
+   @Override
+   public void patchBeerById(final UUID beerId, final Beer beer) {
+      Beer existing = beerMap.get(beerId);
+
+      if (StringUtils.hasText(beer.getBeerName())) {
+         existing.setBeerName(beer.getBeerName());
+      }
+
+      if (beer.getBeerStyle() != null) {
+         existing.setBeerStyle(beer.getBeerStyle());
+      }
+
+      if (beer.getPrice() != null) {
+         existing.setPrice(beer.getPrice());
+      }
+
+      if (beer.getQuantityOnHand() != null) {
+         existing.setQuantityOnHand(beer.getQuantityOnHand());
+      }
+
+      if (StringUtils.hasText(beer.getUpc())) {
+         existing.setUpc(beer.getUpc());
+      }
    }
 
    @Override

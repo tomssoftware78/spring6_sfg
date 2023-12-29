@@ -6,6 +6,8 @@ import be.tvde.di.model.Beer;
 
 public interface BeerService {
 
+   void deleteById(UUID beerId);
+
    List<Beer> listBeers();
 
    Beer getBeerById(UUID id);

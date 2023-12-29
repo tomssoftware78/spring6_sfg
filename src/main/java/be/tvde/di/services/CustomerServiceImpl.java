@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import be.tvde.di.model.Customer;
 
 @Service
@@ -53,4 +54,40 @@ public class CustomerServiceImpl implements CustomerService {
    public Customer getCustomerById(final UUID id) {
       return customerMap.get(id);
    }
+
+   @Override
+   public void patchCustomerById(UUID customerId, Customer customer) {
+      Customer existing = customerMap.get(customerId);
+
+      if (StringUtils.hasText(customer.getName())) {
+         existing.setName(customer.getName());
+      }
+   }
+
+   @Override
+   public void deleteCustomerById(UUID customerId) {
+      customerMap.remove(customerId);
+   }
+
+   @Override
+   public void updateCustomerById(UUID customerId, Customer customer) {
+      Customer existing = customerMap.get(customerId);
+      existing.setName(customer.getName());
+   }
+
+   @Override
+   public Customer saveNewCustomer(Customer customer) {
+      Customer savedCustomer = Customer.builder()
+                                       .id(UUID.randomUUID())
+                                       .version(1)
+                                       .lastModifiedDate(LocalDateTime.now())
+                                       .createdDate(LocalDateTime.now())
+                                       .name(customer.getName())
+                                       .build();
+
+      customerMap.put(savedCustomer.getId(), savedCustomer);
+
+      return savedCustomer;
+   }
+
 }

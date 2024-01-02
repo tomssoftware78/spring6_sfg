@@ -27,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import be.tvde.di.model.Beer;
 import be.tvde.di.model.Customer;
 import be.tvde.di.services.CustomerService;
 import be.tvde.di.services.CustomerServiceImpl;
@@ -63,7 +62,7 @@ class CustomerControllerTest {
       when(customerService.getCustomerById(testCustomer.getId())).thenReturn(testCustomer);
 
       mockMvc.perform(
-                   get("/api/v1/customer/" + testCustomer.getId())
+                   get(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())
                          .accept(MediaType.APPLICATION_JSON))
              .andExpect(status().isOk())
              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +74,7 @@ class CustomerControllerTest {
       when(customerService.listCustomers()).thenReturn(customerServiceImpl.listCustomers());
 
       mockMvc.perform(
-                   get("/api/v1/customer")
+                   get(CustomerController.CUSTOMER_PATH)
                          .accept(MediaType.APPLICATION_JSON))
              .andExpect(status().isOk())
              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +88,7 @@ class CustomerControllerTest {
       customer.setId(null);
 
       when(customerService.saveNewCustomer(any(Customer.class))).thenReturn(customerServiceImpl.listCustomers().get(1));
-      mockMvc.perform(post("/api/v1/customer")
+      mockMvc.perform(post(CustomerController.CUSTOMER_PATH)
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(customer)))
@@ -101,11 +100,11 @@ class CustomerControllerTest {
    void testUpdateCustomer() throws Exception {
       final Customer customer = customerServiceImpl.listCustomers().get(0);
 
-      mockMvc.perform(put("/api/v1/customer/" + customer.getId())
+      mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(customer)))
-            .andExpect(status().isNoContent());
+             .andExpect(status().isNoContent());
 
       verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
    }
@@ -114,7 +113,7 @@ class CustomerControllerTest {
    void testDeleteCustomer() throws Exception {
       final Customer customer = customerServiceImpl.listCustomers().get(0);
 
-      mockMvc.perform(delete("/api/v1/customer/" + customer.getId())
+      mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON))
              .andExpect(status().isNoContent());
@@ -129,7 +128,7 @@ class CustomerControllerTest {
       final Map<String, Object> customerMap = new HashMap<>();
       customerMap.put("name", "tvde");
 
-      mockMvc.perform(patch("/api/v1/customer/" + customer.getId())
+      mockMvc.perform(patch(CustomerController.CUSTOMER_PATH_ID, customer.getId())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(customerMap)))

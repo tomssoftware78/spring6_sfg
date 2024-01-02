@@ -6,13 +6,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import be.tvde.di.model.Customer;
 import be.tvde.di.services.CustomerService;
@@ -22,21 +21,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/customer")
 public class CustomerController {
+
+   public static final String CUSTOMER_PATH = "/api/v1/customer";
+   public static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
 
    private CustomerService customerService;
 
-   @RequestMapping(method = RequestMethod.GET)
+   @GetMapping(value = CUSTOMER_PATH)
    public List<Customer> listAllCustomers() {
       return customerService.listCustomers();
    }
-   @RequestMapping(value = "/{customerId}", method = RequestMethod.GET)
+
+   @GetMapping(value = CUSTOMER_PATH_ID)
    public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
       return customerService.getCustomerById(customerId);
    }
 
-   @PatchMapping("{customerId}")
+   @PatchMapping(value = CUSTOMER_PATH_ID)
    public ResponseEntity patchCustomerById(@PathVariable("customerId") UUID customerId,
                                            @RequestBody Customer customer) {
 
@@ -45,7 +47,7 @@ public class CustomerController {
       return new ResponseEntity(HttpStatus.NO_CONTENT);
    }
 
-   @DeleteMapping("{customerId}")
+   @DeleteMapping(value = CUSTOMER_PATH_ID)
    public ResponseEntity deleteCustomerById(@PathVariable("customerId") UUID customerId) {
 
       customerService.deleteCustomerById(customerId);
@@ -53,7 +55,7 @@ public class CustomerController {
       return new ResponseEntity(HttpStatus.NO_CONTENT);
    }
 
-   @PutMapping("{customerId}")
+   @PutMapping(value = CUSTOMER_PATH_ID)
    public ResponseEntity updateCustomerByID(@PathVariable("customerId") UUID customerId,
                                             @RequestBody Customer customer) {
 
@@ -62,7 +64,7 @@ public class CustomerController {
       return new ResponseEntity(HttpStatus.NO_CONTENT);
    }
 
-   @PostMapping
+   @PostMapping(value = CUSTOMER_PATH)
    public ResponseEntity handlePost(@RequestBody Customer customer) {
       Customer savedCustomer = customerService.saveNewCustomer(customer);
 

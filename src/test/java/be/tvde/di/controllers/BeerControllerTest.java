@@ -28,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.Beer;
 import be.tvde.di.services.BeerService;
 import be.tvde.di.services.BeerServiceImpl;
@@ -151,4 +152,12 @@ class BeerControllerTest {
       assertThat(beerMap.get("beerName")).isEqualTo(beerArgumentCaptor.getValue().getBeerName());
    }
 
+   @Test
+   void testBeerNotFound() throws Exception {
+      when(beerService.getBeerById(any(UUID.class))).thenThrow(NotFoundException.class);
+
+      mockMvc.perform(
+                  get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
+             .andExpect(status().isNotFound());
+   }
 }

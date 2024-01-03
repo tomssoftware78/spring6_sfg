@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ class CustomerControllerTest {
 
       final Customer testCustomer = customerServiceImpl.listCustomers().get(0);
 
-      when(customerService.getCustomerById(testCustomer.getId())).thenReturn(testCustomer);
+      when(customerService.getCustomerById(testCustomer.getId())).thenReturn(Optional.of(testCustomer));
 
       mockMvc.perform(
                    get(CustomerController.CUSTOMER_PATH_ID, testCustomer.getId())

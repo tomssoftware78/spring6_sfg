@@ -1,6 +1,7 @@
 package be.tvde.di.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import be.tvde.di.model.Beer;
 
@@ -10,7 +11,7 @@ public interface BeerService {
 
    List<Beer> listBeers();
 
-   Beer getBeerById(UUID id);
+   Optional<Beer> getBeerById(UUID id);
 
    void patchBeerById(UUID beerId, Beer beer);
 

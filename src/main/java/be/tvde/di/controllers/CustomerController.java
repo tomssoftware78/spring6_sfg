@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.Customer;
 import be.tvde.di.services.CustomerService;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class CustomerController {
 
    @GetMapping(value = CUSTOMER_PATH_ID)
    public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
-      return customerService.getCustomerById(customerId);
+      return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
    }
 
    @PatchMapping(value = CUSTOMER_PATH_ID)

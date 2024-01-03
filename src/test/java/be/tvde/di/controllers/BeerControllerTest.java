@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class BeerControllerTest {
    @Test
    void testGetBeerById() throws Exception {
       final Beer testBeer = beerServiceImpl.listBeers().get(0);
-      when(beerService.getBeerById(any(UUID.class))).thenReturn(testBeer);
+      when(beerService.getBeerById(any(UUID.class))).thenReturn(Optional.of(testBeer));
       mockMvc.perform(
                    get(BeerController.BEER_PATH + "/" + testBeer.getId())
                          .accept(MediaType.APPLICATION_JSON)

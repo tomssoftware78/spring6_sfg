@@ -30,7 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import be.tvde.di.exception.NotFoundException;
-import be.tvde.di.model.Beer;
+import be.tvde.di.model.BeerDto;
 import be.tvde.di.services.BeerService;
 import be.tvde.di.services.BeerServiceImpl;
 
@@ -50,7 +50,7 @@ class BeerControllerTest {
    @Captor
    private ArgumentCaptor<UUID> uuidArgumentCaptor;
    @Captor
-   private ArgumentCaptor<Beer> beerArgumentCaptor;
+   private ArgumentCaptor<BeerDto> beerArgumentCaptor;
 
    @BeforeEach
    void init() {
@@ -59,26 +59,26 @@ class BeerControllerTest {
 
    @Test
    void testCreateNewBeer() throws Exception {
-      final Beer beer = beerServiceImpl.listBeers().get(0);
-      beer.setVersion(null);
-      beer.setId(null);
+      final BeerDto beerDto = beerServiceImpl.listBeers().get(0);
+      beerDto.setVersion(null);
+      beerDto.setId(null);
 
-      when(beerService.saveNewBeer(any(Beer.class))).thenReturn(beerServiceImpl.listBeers().get(1));
+      when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beerServiceImpl.listBeers().get(1));
       mockMvc.perform(
                    post(BeerController.BEER_PATH)
                          .accept(MediaType.APPLICATION_JSON)
                          .contentType(MediaType.APPLICATION_JSON)
-                         .content(objectMapper.writeValueAsString(beer)))
+                         .content(objectMapper.writeValueAsString(beerDto)))
              .andExpect(status().isCreated())
              .andExpect(header().exists("Location"));
    }
 
    @Test
    void testGetBeerById() throws Exception {
-      final Beer testBeer = beerServiceImpl.listBeers().get(0);
-      when(beerService.getBeerById(any(UUID.class))).thenReturn(Optional.of(testBeer));
+      final BeerDto testBeerDto = beerServiceImpl.listBeers().get(0);
+      when(beerService.getBeerById(any(UUID.class))).thenReturn(Optional.of(testBeerDto));
       mockMvc.perform(
-                   get(BeerController.BEER_PATH + "/" + testBeer.getId())
+                   get(BeerController.BEER_PATH + "/" + testBeerDto.getId())
                          .accept(MediaType.APPLICATION_JSON)
                      )
              .andExpect(
@@ -87,14 +87,14 @@ class BeerControllerTest {
              .andExpect(
                    content().contentType(MediaType.APPLICATION_JSON)
                        )
-             .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))
-             .andExpect(jsonPath("$.beerName", is(testBeer.getBeerName())));
+             .andExpect(jsonPath("$.id", is(testBeerDto.getId().toString())))
+             .andExpect(jsonPath("$.beerName", is(testBeerDto.getBeerName())));
    }
 
    @Test
    void testListBeers() throws Exception {
-      final List<Beer> testBeers = beerServiceImpl.listBeers();
-      when(beerService.listBeers()).thenReturn(testBeers);
+      final List<BeerDto> testBeerDtos = beerServiceImpl.listBeers();
+      when(beerService.listBeers()).thenReturn(testBeerDtos);
       mockMvc.perform(
                    get(BeerController.BEER_PATH)
                          .accept(MediaType.APPLICATION_JSON)
@@ -111,45 +111,45 @@ class BeerControllerTest {
 
    @Test
    void testUpdateBeer() throws Exception {
-      final Beer beer = beerServiceImpl.listBeers().get(0);
+      final BeerDto beerDto = beerServiceImpl.listBeers().get(0);
 
-      mockMvc.perform(put(BeerController.BEER_PATH + "/" + beer.getId().toString())
+      mockMvc.perform(put(BeerController.BEER_PATH + "/" + beerDto.getId().toString())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(beer)))
+                            .content(objectMapper.writeValueAsString(beerDto)))
              .andExpect(status().isNoContent());
 
-      verify(beerService).updateBeerById(any(UUID.class), any(Beer.class));
+      verify(beerService).updateBeerById(any(UUID.class), any(BeerDto.class));
    }
 
    @Test
    void testDeleteBeer() throws Exception {
-      final Beer beer = beerServiceImpl.listBeers().get(0);
+      final BeerDto beerDto = beerServiceImpl.listBeers().get(0);
 
-      mockMvc.perform(delete(BeerController.BEER_PATH + "/" + beer.getId())
+      mockMvc.perform(delete(BeerController.BEER_PATH + "/" + beerDto.getId())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON))
              .andExpect(status().isNoContent());
 
       verify(beerService).deleteById(uuidArgumentCaptor.capture());
-      assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+      assertThat(beerDto.getId()).isEqualTo(uuidArgumentCaptor.getValue());
    }
 
    @Test
    void testPatchBeer() throws Exception {
-      final Beer beer = beerServiceImpl.listBeers().get(0);
+      final BeerDto beerDto = beerServiceImpl.listBeers().get(0);
 
       Map<String, Object> beerMap = new HashMap<>();
       beerMap.put("beerName", "Jupiler");
 
-      mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+      mockMvc.perform(patch(BeerController.BEER_PATH_ID, beerDto.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(beerMap)))
              .andExpect(status().isNoContent());
 
       verify(beerService).patchBeerById(uuidArgumentCaptor.capture(), beerArgumentCaptor.capture());
-      assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+      assertThat(beerDto.getId()).isEqualTo(uuidArgumentCaptor.getValue());
       assertThat(beerMap.get("beerName")).isEqualTo(beerArgumentCaptor.getValue().getBeerName());
    }
 

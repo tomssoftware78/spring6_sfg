@@ -3,6 +3,8 @@ package be.tvde.di.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,6 +13,8 @@ import lombok.Data;
 public class BeerDto {
    private UUID id;
    private Integer version;
+   @NotNull
+   @NotBlank
    private String beerName;
    private BeerStyle beerStyle;
    private String upc;

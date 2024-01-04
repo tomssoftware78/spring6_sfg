@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,7 +44,7 @@ public class BeerController {
    }
 
    @PostMapping(value = BEER_PATH)
-   public ResponseEntity handlePost(@RequestBody BeerDto beerDto) {
+   public ResponseEntity handlePost(@Validated @RequestBody BeerDto beerDto) {
       BeerDto savedBeerDto = beerService.saveNewBeer(beerDto);
 
       HttpHeaders headers = new HttpHeaders();

@@ -28,12 +28,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.BeerDto;
 import be.tvde.di.services.BeerService;
 import be.tvde.di.services.BeerServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @WebMvcTest(value = BeerController.class)
 class BeerControllerTest {
 
@@ -158,7 +161,22 @@ class BeerControllerTest {
       when(beerService.getBeerById(any(UUID.class))).thenThrow(NotFoundException.class);
 
       mockMvc.perform(
-                  get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
+                   get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
              .andExpect(status().isNotFound());
+   }
+
+   @Test
+   void testCreateBeerNullBeerName() throws Exception {
+      final BeerDto beerDto = BeerDto.builder().build();
+
+      when(beerService.saveNewBeer(any(BeerDto.class))).thenReturn(beerServiceImpl.listBeers().get(1));
+
+      final MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_PATH)
+                                                        .accept(MediaType.APPLICATION_JSON)
+                                                        .contentType(MediaType.APPLICATION_JSON)
+                                                        .content(objectMapper.writeValueAsString(beerDto)))
+                                         .andExpect(status().isBadRequest())
+                                         .andReturn();
+      log.debug(mvcResult.getResponse().getContentAsString());
    }
 }

@@ -54,7 +54,7 @@ public class BeerController {
    }
 
    @PutMapping(value = BEER_PATH_ID)
-   public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @RequestBody BeerDto beerDto) {
+   public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @Validated @RequestBody BeerDto beerDto) {
       beerService.updateBeerById(beerId, beerDto);
 
       return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -74,8 +74,8 @@ public class BeerController {
       return new ResponseEntity(HttpStatus.NO_CONTENT);
    }
 
-//   @ExceptionHandler(NotFoundException.class)
-//   public ResponseEntity handleNotFoundException() {
-//      return ResponseEntity.notFound().build();
-//   }
+   //   @ExceptionHandler(NotFoundException.class)
+   //   public ResponseEntity handleNotFoundException() {
+   //      return ResponseEntity.notFound().build();
+   //   }
 }

@@ -176,7 +176,23 @@ class BeerControllerTest {
                                                         .contentType(MediaType.APPLICATION_JSON)
                                                         .content(objectMapper.writeValueAsString(beerDto)))
                                          .andExpect(status().isBadRequest())
+                                         .andExpect(jsonPath("$.length()", is(6)))
                                          .andReturn();
+      log.debug(mvcResult.getResponse().getContentAsString());
+   }
+
+   @Test
+   void testUpdateBeerBlankName() throws Exception {
+      final BeerDto beerDto = beerServiceImpl.listBeers().get(0);
+      beerDto.setBeerName(" ");
+
+      final MvcResult mvcResult = mockMvc.perform(put(BeerController.BEER_PATH + "/" + beerDto.getId().toString())
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(beerDto)))
+             .andExpect(status().isBadRequest())
+             .andExpect(jsonPath("$.length()", is(1))) //not 2 because not null constraint is ok
+            .andReturn();
       log.debug(mvcResult.getResponse().getContentAsString());
    }
 }

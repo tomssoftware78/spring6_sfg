@@ -3,16 +3,25 @@ package be.tvde.di.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import be.tvde.di.entities.Beer;
 import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.BeerDto;
@@ -30,6 +39,17 @@ class BeerControllerIT {
    private BeerController beerController;
    @Autowired
    private BeerRepository beerRepository;
+   @Autowired
+   private WebApplicationContext wac;
+   @Autowired
+   private ObjectMapper objectMapper;
+
+   private MockMvc mockMvc;
+
+   @BeforeEach
+   void init() {
+      mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+   }
 
    @Test
    void testListBeers() {
@@ -78,5 +98,18 @@ class BeerControllerIT {
       final UUID savedUUID = UUID.fromString(split[4]);
       final Beer beer = beerRepository.findById(savedUUID).get();
       assertThat(beer).isNotNull();
+   }
+
+   @Test
+   void testPatchBeerBadName() throws Exception {
+      final Beer beer = beerRepository.findAll().get(0);
+      final HashMap<String, Object> beerMap = new HashMap<>();
+      beerMap.put("beerName", "New name 01234567890123456789012345678901234567890123456789");
+
+      mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(beerMap)))
+             .andExpect(status().isBadRequest());
    }
 }

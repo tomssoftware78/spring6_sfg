@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import be.tvde.di.entities.Beer;
 import be.tvde.di.entities.Customer;
@@ -15,12 +16,15 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!localmysql")
 public class BootstrapData implements CommandLineRunner {
 
    private final BeerRepository beerRepository;
    private final CustomerRepository customerRepository;
    @Override
    public void run(final String... args) throws Exception {
+      System.out.println("Bootstrapping the data");
+
       loadBeerData();
       loadCustomerData();
    }

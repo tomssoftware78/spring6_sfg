@@ -4,9 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
+import org.springframework.stereotype.Service;
 import com.opencsv.bean.CsvToBeanBuilder;
 import be.tvde.di.model.BeerCSVRecord;
+import lombok.RequiredArgsConstructor;
 
+@Service
+@RequiredArgsConstructor
 public class BeerCSVServiceImpl implements BeerCSVService {
 
    @Override

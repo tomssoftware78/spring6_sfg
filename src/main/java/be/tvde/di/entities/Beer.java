@@ -3,8 +3,10 @@ package be.tvde.di.entities;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import be.tvde.di.model.BeerStyle;
 import jakarta.persistence.Column;
@@ -56,7 +58,11 @@ public class Beer {
 
    @NotNull
    private BigDecimal price;
+
+   @CreationTimestamp
    private LocalDateTime createdDate;
+
+   @UpdateTimestamp
    private LocalDateTime updateDate;
 
 }

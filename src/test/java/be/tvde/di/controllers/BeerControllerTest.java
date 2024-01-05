@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.BeerDto;
+import be.tvde.di.model.BeerStyle;
 import be.tvde.di.services.BeerService;
 import be.tvde.di.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +146,10 @@ class BeerControllerTest {
 
       Map<String, Object> beerMap = new HashMap<>();
       beerMap.put("beerName", "Jupiler");
+      beerMap.put("beerStyle", BeerStyle.IPA);
+      beerMap.put("upc", "123");
+      beerMap.put("price", new BigDecimal("12.99"));
+
 
       mockMvc.perform(patch(BeerController.BEER_PATH_ID, beerDto.getId())
                             .contentType(MediaType.APPLICATION_JSON)

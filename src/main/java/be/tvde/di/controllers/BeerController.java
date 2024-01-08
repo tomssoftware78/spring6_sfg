@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import be.tvde.di.exception.NotFoundException;
 import be.tvde.di.model.BeerDto;
+import be.tvde.di.model.BeerStyle;
 import be.tvde.di.services.BeerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +33,10 @@ public class BeerController {
    private final BeerService beerService;
 
    @GetMapping(value = BEER_PATH)
-   public List<BeerDto> listBeers() {
-      return beerService.listBeers();
+   public List<BeerDto> listBeers(@RequestParam(name = "beerName", required = false) final String beerName,
+                                  @RequestParam(name = "beerStyle", required = false) final BeerStyle beerStyle,
+                                  @RequestParam(name = "showInventory", required = false) final Boolean showInventory) {
+      return beerService.listBeers(beerName, beerStyle, showInventory);
    }
 
    @GetMapping(value = BEER_PATH_ID)

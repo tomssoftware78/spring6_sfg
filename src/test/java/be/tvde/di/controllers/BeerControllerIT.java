@@ -1,15 +1,19 @@
 package be.tvde.di.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +58,7 @@ class BeerControllerIT {
 
    @Test
    void testListBeers() {
-      final List<BeerDto> beerDtos = beerController.listBeers();
+      final List<BeerDto> beerDtos = beerController.listBeers(null, null, null);
       assertThat(beerDtos.size()).isEqualTo(3 + 2410);
    }
 
@@ -62,7 +67,7 @@ class BeerControllerIT {
    @Rollback
    void testEmptyList() {
       beerRepository.deleteAll();
-      final List<BeerDto> beerDtos = beerController.listBeers();
+      final List<BeerDto> beerDtos = beerController.listBeers(null, null, null);
       assertTrue(beerDtos.isEmpty());
    }
 
@@ -111,5 +116,54 @@ class BeerControllerIT {
                             .accept(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(beerMap)))
              .andExpect(status().isBadRequest());
+   }
+
+   @Test
+   void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
+      final MvcResult mvcResult =
+            mockMvc.perform(get(BeerController.BEER_PATH)
+                            .queryParam("beerName", "IPA")
+                            .queryParam("beerStyle", BeerStyle.IPA.name())
+                            .queryParam("showInventory", "true"))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.size()", is(310)))
+             .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()))
+             .andReturn();
+   }
+
+   @Test
+   void tesListBeersByStyleAndNameShowInventoryFalse() throws Exception {
+      mockMvc.perform(get(BeerController.BEER_PATH)
+                            .queryParam("beerName", "IPA")
+                            .queryParam("beerStyle", BeerStyle.IPA.name())
+                            .queryParam("showInventory", "false"))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.size()", is(310)))
+             .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+   }
+
+   @Test
+   void tesListBeersByStyleAndName() throws Exception {
+      mockMvc.perform(get(BeerController.BEER_PATH)
+                            .queryParam("beerName", "IPA")
+                            .queryParam("beerStyle", BeerStyle.IPA.name()))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.size()", is(310)));
+   }
+
+   @Test
+   void tesListBeersByStyle() throws Exception {
+      mockMvc.perform(get(BeerController.BEER_PATH)
+                            .queryParam("beerStyle", BeerStyle.IPA.name()))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.size()", is(548)));
+   }
+
+   @Test
+   void testListBeersByName() throws Exception {
+      mockMvc.perform(get(BeerController.BEER_PATH)
+                            .queryParam("beerName", "IPA"))
+             .andExpect(status().isOk())
+             .andExpect(jsonPath("$.size()", is(336)));
    }
 }

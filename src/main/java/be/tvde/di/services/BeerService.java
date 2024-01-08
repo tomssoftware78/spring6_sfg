@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import be.tvde.di.model.BeerDto;
+import be.tvde.di.model.BeerStyle;
 
 public interface BeerService {
 
    void deleteById(UUID beerId);
 
-   List<BeerDto> listBeers();
+   List<BeerDto> listBeers(final String beerName, final BeerStyle beerStyle, final Boolean showInventory);
 
    Optional<BeerDto> getBeerById(UUID id);
 

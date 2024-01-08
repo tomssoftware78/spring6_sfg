@@ -3,14 +3,19 @@ package be.tvde.di.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import be.tvde.di.bootstrap.BootstrapData;
 import be.tvde.di.entities.Beer;
 import be.tvde.di.model.BeerStyle;
+import be.tvde.di.services.BeerCSVServiceImpl;
 import jakarta.validation.ConstraintViolationException;
 
 @DataJpaTest
+@Import({BootstrapData.class, BeerCSVServiceImpl.class}) //import these to make sure data is bootstrapped
 class BeerRepositoryTest {
 
    @Autowired
@@ -47,6 +52,14 @@ class BeerRepositoryTest {
          // to see the validation errors (hibernate needs to write immediately to the db
          // so we see the errors)
       });
+
+   }
+
+   @Test
+   void testGetBeerListByName() {
+      final List<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%");
+
+      assertThat(beerList.size()).isEqualTo(336);
 
    }
 }
